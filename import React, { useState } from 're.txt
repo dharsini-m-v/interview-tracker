@@ -1,0 +1,212 @@
+import React, { useState } from 'react';
+import { CheckCircle, XCircle, Clock, Ghost, Briefcase } from 'lucide-react';
+
+export default function InterviewTracker() {
+  const [stats, setStats] = useState({
+    total: 0,
+    selected: 0,
+    rejected: 0,
+    ghosted: 0,
+    waitlisted: 0
+  });
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempStats, setTempStats] = useState({ ...stats });
+
+  const handleEdit = () => {
+    setTempStats({ ...stats });
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    setStats({ ...tempStats });
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setTempStats({ ...stats });
+    setIsEditing(false);
+  };
+
+  const handleChange = (field, value) => {
+    const numValue = parseInt(value) || 0;
+    setTempStats(prev => ({ ...prev, [field]: numValue }));
+  };
+
+  const StatCard = ({ icon: Icon, label, count, color, iconColor }) => (
+    <div className="bg-white rounded-lg shadow-md p-6 flex items-center space-x-4 hover:shadow-lg transition-shadow">
+      <div className={`p-3 rounded-full ${color}`}>
+        <Icon className={`w-8 h-8 ${iconColor}`} />
+      </div>
+      <div>
+        <p className="text-gray-500 text-sm font-medium">{label}</p>
+        <p className="text-3xl font-bold text-gray-800">{count}</p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-xl shadow-xl p-8 mb-8">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-800 mb-2">Interview Tracker</h1>
+              <p className="text-gray-600">Track your interview journey and outcomes</p>
+            </div>
+            {!isEditing ? (
+              <button
+                onClick={handleEdit}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+              >
+                Update Stats
+              </button>
+            ) : null}
+          </div>
+
+          {isEditing && (
+            <div className="bg-gray-50 rounded-lg p-6 mb-8">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Edit Interview Statistics</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-purple-700 mb-2">Total Interviews</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={tempStats.total}
+                    onChange={(e) => handleChange('total', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-green-700 mb-2">Selected</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={tempStats.selected}
+                    onChange={(e) => handleChange('selected', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-red-700 mb-2">Rejected</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={tempStats.rejected}
+                    onChange={(e) => handleChange('rejected', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ghosted</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={tempStats.ghosted}
+                    onChange={(e) => handleChange('ghosted', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-yellow-700 mb-2">Waitlisted</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={tempStats.waitlisted}
+                    onChange={(e) => handleChange('waitlisted', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
+              <div className="flex space-x-4 mt-6">
+                <button
+                  onClick={handleSave}
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="bg-gray-400 hover:bg-gray-500 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <StatCard
+              icon={Briefcase}
+              label="Total Interviews"
+              count={stats.total}
+              color="bg-purple-100"
+              iconColor="text-purple-600"
+            />
+            <StatCard
+              icon={CheckCircle}
+              label="Selected"
+              count={stats.selected}
+              color="bg-green-100"
+              iconColor="text-green-600"
+            />
+            <StatCard
+              icon={XCircle}
+              label="Rejected"
+              count={stats.rejected}
+              color="bg-red-100"
+              iconColor="text-red-600"
+            />
+            <StatCard
+              icon={Ghost}
+              label="Ghosted"
+              count={stats.ghosted}
+              color="bg-gray-100"
+              iconColor="text-gray-600"
+            />
+            <StatCard
+              icon={Clock}
+              label="Waitlisted"
+              count={stats.waitlisted}
+              color="bg-yellow-100"
+              iconColor="text-yellow-600"
+            />
+          </div>
+
+          {stats.total > 0 && (
+            <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Insights</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                  <p className="text-2xl font-bold text-green-600">
+                    {stats.total > 0 ? ((stats.selected / stats.total) * 100).toFixed(1) : 0}%
+                  </p>
+                  <p className="text-sm text-gray-600">Success Rate</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-red-600">
+                    {stats.total > 0 ? ((stats.rejected / stats.total) * 100).toFixed(1) : 0}%
+                  </p>
+                  <p className="text-sm text-gray-600">Rejection Rate</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-gray-600">
+                    {stats.total > 0 ? ((stats.ghosted / stats.total) * 100).toFixed(1) : 0}%
+                  </p>
+                  <p className="text-sm text-gray-600">Ghosted Rate</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-yellow-600">
+                    {stats.total > 0 ? ((stats.waitlisted / stats.total) * 100).toFixed(1) : 0}%
+                  </p>
+                  <p className="text-sm text-gray-600">Pending Rate</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
